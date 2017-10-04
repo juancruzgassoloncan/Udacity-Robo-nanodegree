@@ -1,3 +1,4 @@
 /tools/
 /data/
 *.pyc
+.ipynb_checkpoints/
