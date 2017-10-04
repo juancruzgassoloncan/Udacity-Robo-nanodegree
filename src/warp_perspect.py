@@ -30,24 +30,13 @@ source = np.float32([[35, 135],
                      [120, 97],
                      [202, 97],
                      [300, 135]])
-# source = np.float32([[0, 0],
-#                  [0, image.shape[0]],
-#                  [image.shape[1], image.shape[0]],
-#                  [image.shape[1], 0]])
-# destination = np.float32([[0, 0],
-#                  [0, image.shape[0]],
-#                  [image.shape[1], image.shape[0]],
-#                  [image.shape[1], 0]])
 dst_size = 5
-bottom_offset = 15
-destination = np.float32([[image.shape[1] / 2 - dst_size,
-                           image.shape[0] - bottom_offset],
-                          [image.shape[1] / 2 - dst_size, 2 *
-                              dst_size + image.shape[0] - bottom_offset],
-                          [image.shape[1] / 2 + dst_size, 2 *
-                              dst_size + image.shape[0] - bottom_offset],
-                          [image.shape[1] / 2 + dst_size,
-                           image.shape[0] - bottom_offset]])
+bottom_offset = 6
+destination = np.float32([[image.shape[1]/2 - dst_size, image.shape[0] - bottom_offset],
+                          [image.shape[1]/2 - dst_size, image.shape[0] - bottom_offset - 2*dst_size],
+                          [image.shape[1]/2 + dst_size, image.shape[0] - bottom_offset - 2*dst_size],
+                          [image.shape[1]/2 + dst_size, image.shape[0] - bottom_offset],
+                          ])
 
 warped = perspect_transform(image, source, destination)
 # Draw Source and destination points on images (in blue) before plotting
