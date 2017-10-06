@@ -48,7 +48,7 @@ import glob  # For reading in a list of images from a folder
 
 # In[3]:
 
-path = '../../data/IMG_1/*'
+path = '../test_dataset/IMG/*'
 img_list = glob.glob(path)
 # Grab a random image and display it
 idx = np.random.randint(0, len(img_list) - 1)
@@ -65,8 +65,8 @@ plt.show()
 # In the simulator you can toggle on a grid on the ground for calibration
 # You can also toggle on the rock samples with the 0 (zero) key.
 # Here's an example of the grid and one of the rocks
-# example_grid = './calibration_images/example_grid1.jpg'
-example_grid = '../../data/IMG/robocam_2017_10_03_15_35_32_982.jpg'
+example_grid = '../../data/calibration_images/example_grid1.jpg'
+# example_grid = '../../data/IMG/robocam_2017_10_03_15_35_32_982.jpg'
 # example_rock = './calibration_images/example_rock1.jpg'
 example_rock = '../../data/IMG_1/robocam_2017_10_02_14_38_00_729.jpg'
 
@@ -149,17 +149,77 @@ def color_thresh(img, rgb_thresh=(160, 160, 160)):
     # Return the binary image
     return color_select
 
+  # navigable
 
-def color_thresh_hsv(img, hsv_thresh=(56, 255, 255)):
-    img_hsv = cv2.cvtColor(img, cv2.COLOR_RGBHSV)
-    mask = cv2.inRange(img_hsv, (53, 150, 150), hsv_thresh, dst=None)
+
+def color_thresh_hsv(img, low_thresh=(20, 85, 85), high_thresh=(35, 255, 255), inv=False):
+    """Color thresholding in HSV color space.
+
+    Arguments
+    ---------
+    img: numpy.ndarray
+        rgb image array
+    low_thresh: tuple
+        Lower boundary color in (h,s,v)
+    high_thresh: tuple
+        Higher boundary color in (h,s,v)
+
+    Returns
+    -------
+    res: numpy.ndarray
+        The resulting confusion threshed image.
+    mask: numpy.ndarray
+        The segmentation mask.
+    """
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    mask = cv2.inRange(img_hsv, low_thresh, high_thresh, dst=None) / 255
+    if inv is True:
+        mask = -(mask - 1)
+    res = cv2.bitwise_and(img, img, dst=None, mask=mask)
+    return res, mask
+
+
+def segmentation(img, mask):
     res = cv2.bitwise_and(img, img, dst=None, mask=mask)
     return res
 
 
-# threshed = color_thresh(warped)
-threshed = color_thresh_hsv(image)
-plt.imshow(threshed)
+def world_segmentation(img,
+                       l_r_thresh=(20, 85, 85),
+                       h_r_thresh=(35, 255, 255),
+                       l_n_thresh=(0, 30, 170),
+                       h_n_thresh=(255, 80, 255),
+                       l_o_thresh=(0, 40, 0),
+                       h_o_thresh=(150, 255, 120)):
+    res_r, mask_r = color_thresh_hsv(img, l_r_thresh, h_r_thresh)
+    res, mask_n = color_thresh_hsv(img, l_n_thresh, h_n_thresh)
+    res, mask_o = color_thresh_hsv(img, l_o_thresh, h_o_thresh)
+
+    return mask_n, mask_o, mask_r
+
+
+low_r_thresh = (20, 85, 85)
+high_r_thresh = (35, 255, 255)  # rocks
+low_n_thresh = (0, 0, 180)
+high_n_thresh = (255, 80, 255)
+threshed_r, mask_r = color_thresh_hsv(image, low_r_thresh, high_r_thresh)
+threshed_n, mask_n = color_thresh_hsv(image, low_n_thresh, high_n_thresh)
+threshed_fild = color_thresh(warped)
+mask_o = -(mask_n - 1)
+test_s = image[25:35, 29:35, :]
+test_f = image[100:120, 140:190, :]
+test_o = image[:80, :20, :]
+hsv_test = cv2.cvtColor(test_o, cv2.COLOR_BGR2HSV)
+hsv_test[:, :, 2].min()
+hsv_test[:, :, 2].max()
+idx = np.random.randint(0, len(img_list) - 1)
+image = plt.imread(img_list[idx])
+threshed_o, mask_o = color_thresh_hsv(image, (0, 40, 0), (150, 255, 120))
+plt.imshow(mask_o,'gray')
+plt.show()
+
+# threshed_o = segmentation(image,mask_o)
+plt.imshow(threshed_o, 'gray')
 plt.show()
 #scipy.misc.imsave('../output/warped_threshed.jpg', threshed*255)
 
@@ -195,11 +255,10 @@ def to_polar_coords(x_pixel, y_pixel):
 
 
 def rotate_pix(xpix, ypix, yaw):
-    # TODO:
-    # Convert yaw to radians
+    yaw_r = yaw * np.pi / 180
     # Apply a rotation
-    xpix_rotated = 0
-    ypix_rotated = 0
+    xpix_rotated = xpix * np.cos(yaw_r) - ypix * np.sin(yaw_r)
+    ypix_rotated = xpix * np.sin(yaw_r) + ypix * np.cos(yaw_r)
     # Return the result
     return xpix_rotated, ypix_rotated
 
@@ -207,10 +266,9 @@ def rotate_pix(xpix, ypix, yaw):
 
 
 def translate_pix(xpix_rot, ypix_rot, xpos, ypos, scale):
-    # TODO:
     # Apply a scaling and a translation
-    xpix_translated = 0
-    ypix_translated = 0
+    xpix_translated = xpix_rot / scale + xpos
+    ypix_translated = ypix_rot / scale + ypos
     # Return the result
     return xpix_translated, ypix_translated
 
@@ -234,10 +292,20 @@ def pix_to_world(xpix, ypix, xpos, ypos, yaw, world_size, scale):
 idx = np.random.randint(0, len(img_list) - 1)
 image = mpimg.imread(img_list[idx])
 warped = perspect_transform(image, source, destination)
-threshed = color_thresh(warped)
+# threshed = color_thresh1(warped)
+# threshed, mask_n = color_thresh_hsv(warped, low_n_thresh, high_n_thresh)
+low_r_thresh = (20, 85, 85)
+high_r_thresh = (35, 255, 255)  # rocks
+low_n_thresh = (0, 0, 180)
+high_n_thresh = (255, 80, 255)
+w_mask_n, w_mask_o, w_mask_r = world_segmentation(warped,
+                                                  low_r_thresh,
+                                                  high_r_thresh,
+                                                  low_n_thresh,
+                                                  high_n_thresh)
 
 # Calculate pixel values in rover-centric coords and distance/angle to all pixels
-xpix, ypix = rover_coords(threshed)
+xpix, ypix = rover_coords(w_mask_n)
 dist, angles = to_polar_coords(xpix, ypix)
 mean_dir = np.mean(angles)
 
@@ -248,7 +316,7 @@ plt.imshow(image)
 plt.subplot(222)
 plt.imshow(warped)
 plt.subplot(223)
-plt.imshow(threshed, cmap='gray')
+plt.imshow(w_mask_n, cmap='gray')
 plt.subplot(224)
 plt.plot(xpix, ypix, '.')
 plt.ylim(-160, 160)
@@ -258,7 +326,7 @@ x_arrow = arrow_length * np.cos(mean_dir)
 y_arrow = arrow_length * np.sin(mean_dir)
 plt.arrow(0, 0, x_arrow, y_arrow, color='red',
           zorder=2, head_width=10, width=2)
-
+plt.show()
 
 # ## Read in saved data and ground truth map of the world
 # The next cell is all setup to read your saved data into a `pandas` dataframe.  Here you'll also read in a "ground truth" map of the world, where white pixels (pixel value = 1) represent navigable terrain.
@@ -271,11 +339,13 @@ plt.arrow(0, 0, x_arrow, y_arrow, color='red',
 
 # Import pandas and read in csv file as a dataframe
 import pandas as pd
-# Change this path to your data directory
-df = pd.read_csv('./test_dataset/robot_log.csv')
+# Change this path to your data directorypath = '../../data/IMG_1/*'
+
+df = pd.read_csv('../test_dataset/robot_log.csv', delimiter=';', decimal=',')
+# df.head()
 csv_img_list = df["Path"].tolist()  # Create list of image pathnames
 # Read in ground truth map and create a 3-channel image with it
-ground_truth = mpimg.imread('./calibration_images/map_bw.png')
+ground_truth = mpimg.imread('../../data/calibration_images/map_bw.png')
 ground_truth_3d = np.dstack(
     (ground_truth * 0, ground_truth * 255, ground_truth * 0)).astype(np.float)
 
@@ -302,7 +372,6 @@ class Databucket():
 # that you can refer to in the process_image() function below
 data = Databucket()
 
-
 # ## Write a function to process stored images
 #
 # Modify the `process_image()` function below by adding in the perception step processes (functions defined above) to perform image analysis and mapping.  The following cell is all set up to use this `process_image()` function in conjunction with the `moviepy` video processing package to create a video from the images you saved taking data in the simulator.
@@ -319,24 +388,65 @@ data = Databucket()
 # Define a function to pass stored images to
 # reading rover position and yaw angle from csv file
 # This function will be used by moviepy to create an output video
+data.count = -1
+img = mpimg.imread(data.images[data.count])
+
+
 def process_image(img):
     # Example of how to use the Databucket() object defined above
     # to print the current x, y and yaw values
     # print(data.xpos[data.count], data.ypos[data.count], data.yaw[data.count])
-
     # TODO:
     # 1) Define source and destination points for perspective transform
+    src = source
+    dst = destination
+    scale = 10
+    # img_path = data.images[data.count]
+    # img = mpimg.imread(img_path)
+    world_size = data.worldmap.shape[0]
     # 2) Apply perspective transform
+    p_img = perspect_transform(img, src, dst)
     # 3) Apply color threshold to identify navigable terrain/obstacles/rock samples
+    w_mask_t, w_mask_o, w_mask_r = world_segmentation(p_img)
     # 4) Convert thresholded image pixel values to rover-centric coords
+    t_xpix, t_ypix = rover_coords(w_mask_t)
+    o_xpix, o_ypix = rover_coords(w_mask_o)
+    r_xpix, r_ypix = rover_coords(w_mask_r)
     # 5) Convert rover-centric pixel values to world coords
+    xpos = np.float_(data.xpos[data.count])
+    ypos = np.float_(data.ypos[data.count])
+    yaw = np.float_(data.yaw[data.count])
+    wrd_t_xpix, wrd_t_ypix = pix_to_world(t_xpix,
+                                          t_ypix,
+                                          xpos,
+                                          ypos,
+                                          yaw,
+                                          world_size,
+                                          scale)
+    wrd_o_xpix, wrd_o_ypix = pix_to_world(o_xpix,
+                                          o_ypix,
+                                          xpos,
+                                          ypos,
+                                          yaw,
+                                          world_size,
+                                          scale)
+    wrd_r_xpix, wrd_r_ypix = pix_to_world(r_xpix,
+                                          r_ypix,
+                                          xpos,
+                                          ypos,
+                                          yaw,
+                                          world_size,
+                                          scale)
     # 6) Update worldmap (to be displayed on right side of screen)
-        # Example: data.worldmap[obstacle_y_world, obstacle_x_world, 0] += 1
-        #          data.worldmap[rock_y_world, rock_x_world, 1] += 1
-        #          data.worldmap[navigable_y_world, navigable_x_world, 2] += 1
+    # Example: data.worldmap[obstacle_y_world, obstacle_x_world, 0] += 1
+    #          data.worldmap[rock_y_world, rock_x_world, 1] += 1
+    #          data.worldmap[navigable_y_world, navigable_x_world, 2] += 1
+    data.worldmap[wrd_o_ypix, wrd_o_xpix, 0] += 1
+    data.worldmap[wrd_r_ypix, wrd_r_xpix, 1] += 1
+    data.worldmap[wrd_t_ypix, wrd_t_xpix, 2] += 1
 
     # 7) Make a mosaic image, below is some example code
-        # First create a blank image (can be whatever shape you like)
+    # First create a blank image (can be whatever shape you like)
     output_image = np.zeros(
         (img.shape[0] + data.worldmap.shape[0], img.shape[1] * 2, 3))
     # Next you can populate regions of the image with various output
@@ -347,19 +457,32 @@ def process_image(img):
     warped = perspect_transform(img, source, destination)
     # Add the warped image in the upper right hand corner
     output_image[0:img.shape[0], img.shape[1]:] = warped
-
     # Overlay worldmap with ground truth map
-    map_add = cv2.addWeighted(data.worldmap, 1, data.ground_truth, 0.5, 0)
+    map_add = cv2.addWeighted(data.worldmap, 1, data.ground_truth, 0.5, 0.7)
     # Flip map overlay so y-axis points upward and add to output_image
     output_image[img.shape[0]:, 0:data.worldmap.shape[1]] = np.flipud(map_add)
+    # Colored warped img
+    colored_warped = np.zeros_like(warped)
+    colored_warped[:, :, 0] = w_mask_o * 170
+    colored_warped[:, :, 1] = w_mask_r * 170
+    colored_warped[:, :, 2] = w_mask_t * 170
+    output_image[img.shape[0]:img.shape[0] +
+                 warped.shape[0], img.shape[1]:] = colored_warped
 
     # Then putting some text over the image
-    cv2.putText(output_image, "Populate this image with your analyses to make a video!", (20, 20),
+    cv2.putText(output_image, "My Video", (20, 20),
                 cv2.FONT_HERSHEY_COMPLEX, 0.4, (255, 255, 255), 1)
     data.count += 1  # Keep track of the index in the Databucket()
 
     return output_image
-
+# output = []
+# data.count=-1
+# for img_p in data.images:
+#     img = mpimg.imread(img_p)
+#     output.append(process_image(img))
+#
+# plt.imshow(output[50])
+# plt.show()
 
 # ## Make a video from processed image data
 # Use the [moviepy](https://zulko.github.io/moviepy/) library to process images and create a video.
@@ -374,8 +497,10 @@ from moviepy.editor import ImageSequenceClip
 
 
 # Define pathname to save the output video
-output = './output/test_mapping.mp4'
+output = './output/test_mapping_mine.mp4'
 data = Databucket()  # Re-initialize data in case you're running this cell multiple times
+data.count
+data.xpos.shape
 # Note: output video will be sped up because
 clip = ImageSequenceClip(data.images, fps=60)
 # recording rate in simulator is fps=25
@@ -390,13 +515,19 @@ get_ipython().magic('time new_clip.write_videofile(output, audio=False)')
 # In[ ]:
 
 
-output = './output/test_mapping.mp4'
+output = './output/test_mapping_mine.mp4'
 from IPython.display import HTML
-HTML("""
-<video width="960" height="540" controls>
-  <source src="{0}">
-</video>
-""".format(output))
+HTML("""<video width="960" height="540" controls>
+        <source src="{0}">
+        </video>
+        """.format(output))
 
 
 # In[ ]:
+import io
+import base64
+video = io.open(output, 'r+b').read()
+encoded_video = base64.b64encode(video)
+HTML(data='''<video alt="test" controls>
+                <source src="data:video/mp4;base64,{0}" type="video/mp4" />
+             </video>'''.format(encoded_video.decode('ascii')))
