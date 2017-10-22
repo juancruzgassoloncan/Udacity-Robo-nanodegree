@@ -203,24 +203,27 @@ high_r_thresh = (35, 255, 255)  # rocks
 low_n_thresh = (0, 0, 180)
 high_n_thresh = (255, 80, 255)
 threshed_r, mask_r = color_thresh_hsv(image, low_r_thresh, high_r_thresh)
-threshed_n, mask_n = color_thresh_hsv(image, low_n_thresh, high_n_thresh)
 threshed_fild = color_thresh(warped)
 mask_o = -(mask_n - 1)
-test_s = image[25:35, 29:35, :]
-test_f = image[100:120, 140:190, :]
-test_o = image[:80, :20, :]
-hsv_test = cv2.cvtColor(test_o, cv2.COLOR_BGR2HSV)
-hsv_test[:, :, 2].min()
-hsv_test[:, :, 2].max()
+test_s = image[26:32, 64:70, :]
+test_f = image[130:, :50, :]
+test_o = image[120:, :50, :]
+hsv_test = cv2.cvtColor(test_s, cv2.COLOR_BGR2HSV)
+hsv_test[:, :, 1].min()
+hsv_test[:, :, 1].max()
 idx = np.random.randint(0, len(img_list) - 1)
-image = plt.imread(img_list[idx])
-threshed_o, mask_o = color_thresh_hsv(image, (0, 40, 0), (150, 255, 120))
-plt.imshow(mask_o,'gray')
+# image = plt.imread(img_list[idx])
+threshed_o, mask_o = color_thresh_hsv(image, (0, 40, 0), (140, 255, 120))
+threshed_n, mask_n = color_thresh_hsv(image, (0, 0, 173), (255, 70, 255))
+plt.figure(figsize=(10, 10))
+plt.subplot(121)
+plt.imshow(mask_n, 'gray')
+plt.subplot(122)
+plt.imshow(test_s, 'gray')
 plt.show()
-
+# plt.show()
+ # %%
 # threshed_o = segmentation(image,mask_o)
-plt.imshow(threshed_o, 'gray')
-plt.show()
 #scipy.misc.imsave('../output/warped_threshed.jpg', threshed*255)
 
 
@@ -287,36 +290,45 @@ def pix_to_world(xpix, ypix, xpos, ypos, yaw, world_size, scale):
     # Return the result
     return x_pix_world, y_pix_world
 
-
 # Grab another random image
-idx = np.random.randint(0, len(img_list) - 1)
+# idx = np.random.randint(0, len(img_list)-1)
+idx=0
+#%
 image = mpimg.imread(img_list[idx])
-warped = perspect_transform(image, source, destination)
-# threshed = color_thresh1(warped)
-# threshed, mask_n = color_thresh_hsv(warped, low_n_thresh, high_n_thresh)
-low_r_thresh = (20, 85, 85)
-high_r_thresh = (35, 255, 255)  # rocks
-low_n_thresh = (0, 0, 180)
-high_n_thresh = (255, 80, 255)
-w_mask_n, w_mask_o, w_mask_r = world_segmentation(warped,
-                                                  low_r_thresh,
-                                                  high_r_thresh,
-                                                  low_n_thresh,
-                                                  high_n_thresh)
+idx += 20
+roi = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
+roi[70:, :] = 1
+threshed = color_thresh(image)
+res, mask_n = color_thresh_hsv(image, (0, 0, 120), (255, 80, 255), roi=roi)
+# b_mask_n = cv2.blur(mask_n, (10,10))
+# print b_mask_n
+warped = perspect_transform(mask_n, source, destination)
+# threshed = color_thresh(warped)
 
 # Calculate pixel values in rover-centric coords and distance/angle to all pixels
-xpix, ypix = rover_coords(w_mask_n)
+xpix, ypix = rover_coords(warped)
 dist, angles = to_polar_coords(xpix, ypix)
-mean_dir = np.mean(angles)
+da = np.array((dist, angles)).T
+s_ang = 0
+n = 0
+near_a = np.array([a for d, a in da if d < 100])
+# for d,a in da:
+#     if d < 20:
+#         s_ang += a
+#         n += 1
+# mean_dir = np.mean(angles)
+mean_dir = np.mean(near_a)
+desv = np.sqrt(near_a.var())
 
 # Do some plotting
+s_ang = np.var(near_a)
 fig = plt.figure(figsize=(12, 9))
 plt.subplot(221)
 plt.imshow(image)
 plt.subplot(222)
-plt.imshow(warped)
+plt.imshow(warped, cmap='gray')
 plt.subplot(223)
-plt.imshow(w_mask_n, cmap='gray')
+plt.imshow(res, cmap='gray')
 plt.subplot(224)
 plt.plot(xpix, ypix, '.')
 plt.ylim(-160, 160)
@@ -324,9 +336,22 @@ plt.xlim(0, 160)
 arrow_length = 100
 x_arrow = arrow_length * np.cos(mean_dir)
 y_arrow = arrow_length * np.sin(mean_dir)
+dx_arrow1 = arrow_length * np.cos(mean_dir + desv)
+dy_arrow1 = arrow_length * np.sin(mean_dir + desv)
+dx_arrow2 = arrow_length * np.cos(mean_dir - desv)
+dy_arrow2 = arrow_length * np.sin(mean_dir - desv)
 plt.arrow(0, 0, x_arrow, y_arrow, color='red',
           zorder=2, head_width=10, width=2)
-plt.show()
+plt.arrow(0, 0, dx_arrow1, dy_arrow1, color='red',
+          zorder=2, head_width=0, width=1)
+plt.arrow(0, 0, dx_arrow2, dy_arrow2, color='red',
+          zorder=2, head_width=0, width=1)
+
+if warped[125:, :160].sum() < warped[125:, 160:].sum():
+    if warped[125:].sum() * 0.7 < warped[125:, 160:].sum():
+        print 'go ahead'
+else:
+    print 'turn left'
 
 # ## Read in saved data and ground truth map of the world
 # The next cell is all setup to read your saved data into a `pandas` dataframe.  Here you'll also read in a "ground truth" map of the world, where white pixels (pixel value = 1) represent navigable terrain.
