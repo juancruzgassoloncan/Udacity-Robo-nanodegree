@@ -1,0 +1,3 @@
+[submodule "ros-ws/1-catkin_ws/src/simple_arm"]
+	path = ros-ws/1-catkin_ws/src/simple_arm
+	url = ../../udacity/simple_arm_01.git
