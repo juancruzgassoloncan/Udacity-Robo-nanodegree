@@ -13,6 +13,10 @@
         </rosparam>
     </node>
 
+    <!-- The look away node -->
+    <node name="look_away" type="look_away" pkg="simple_arm0">
+
+
     <!--Launch a gazebo world-->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find simple_arm)/worlds/willow_garage.world"/>
