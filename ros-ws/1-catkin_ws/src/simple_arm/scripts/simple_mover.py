@@ -4,6 +4,7 @@ import math
 import rospy
 from std_msgs.msg import Float64
 
+
 def mover():
     pub_j1 = rospy.Publisher('/simple_arm/joint_1_position_controller/command',
                              Float64, queue_size=10)
@@ -21,6 +22,7 @@ def mover():
         pub_j1.publish(math.sin(2*math.pi*0.1*elapsed)*(math.pi/2))
         pub_j2.publish(math.sin(2*math.pi*0.1*elapsed)*(math.pi/2))
         rate.sleep()
+
 
 if __name__ == '__main__':
     try:

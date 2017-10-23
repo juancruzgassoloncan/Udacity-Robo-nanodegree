@@ -32,7 +32,7 @@ def clamp_at_boundaries(requested_j1, requested_j2):
     if not min_j2 <= requested_j2 <= max_j2:
         clamped_j2 = min(max(requested_j2, min_j2), max_j2)
         rospy.logwarn(
-            'j1 is out of bounds. valid range (%s,%s), clamping to %s', min_j2,
+            'j2 is out of bounds. valid range (%s,%s), clamping to %s', min_j2,
             max_j2, clamped_j2)
 
     return clamped_j1, clamped_j2
@@ -45,9 +45,9 @@ def move_arm(pos_j1, pos_j2):
 
     while True:
         joint_state = rospy.wait_for_message('/simple_arm/joint_state',
-                                             JointState, timeout=None)
-        if at_goal(joint_state.position[0], pos_j1=, joint_state.position[1],
-                   pos_j2):
+                                             JointState)
+        if at_goal(joint_state.position[0], pos_j1,
+                   joint_state.position[1], pos_j2):
             time_elapsed = joint_state.header.stamp - time_elapsed
             break
     return time_elapsed
