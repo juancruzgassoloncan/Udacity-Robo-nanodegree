@@ -132,6 +132,24 @@ class FK(object):
     def rpy_m(self,roll, pitch, yaw):
         return self.rot_m('z',yaw) * self.rot_m('y',pitch) * self.rot_m('x',roll)
 
+    def verify_rich_wc(self,j1,j2,j3,wc,tol=0.1):
+
+        q1,q2,q3 = symbols('q1:4')
+
+        Q = {q1:j1,q2:j2,q3:j3}
+        wc_d = self.T0_5.evalf(subs=Q)[:3,3]
+        e_dist = sqrt(((wc[0]-wc_d[0]) ** 2 +\
+                         (wc[1]-wc_d[1]) ** 2 +\
+                         (wc[2]-wc_d[2]) ** 2 ))
+        if round(e_dist,1) <= tol:
+    #        print 'Riched, distance: ', e_dist
+#            print 'wc_d: ',wc_d
+            return True
+        else:
+    #        print 'Not Riched wc, distance: ',e_dist
+#            print 'wc_d: ',wc_d
+            return False
+
 # %%
 if __name__ == '__main__':
 

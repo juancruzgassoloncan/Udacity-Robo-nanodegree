@@ -36,7 +36,11 @@ test_cases = {1:[[[2.16135,-1.42635,1.55109],
           6:[[[-0.71977, 0.71957, 3.3389],
               [0.35118, 0.848, 0.15188, -0.36675]],
               [-0.57302, 0.57286, 3.1181],
-              [-0.79,-0.14,-2.19,-0,0,0]]}
+              [-0.79,-0.14,-2.19,-0,0,0]],
+          7:[[[0.9434, -0.049064, 3.8446],
+              [-0.12212, -0.61538, -0.13373, 0.76714]],
+              [0.88073, -0.032433, 3.4486],
+              [-0.04,0.17,-1.57,-0.95,0.06,0.63]]}
 
 # %%
  ### Your FK code here
@@ -106,18 +110,35 @@ def test_code(test_case):
     ik_kuka.get_Rrpy(*rpy)
     wc = ik_kuka.get_wc(pt[0],pt[1],pt[2])
     tt1 = ik_kuka.get_Theta1()
-    tt2_3 = ik_kuka.get_Theta2_3(wk=1)
-    T3_0 = fk_kuka.invT(fk_kuka.T0_3)
-    tt4_6 = ik_kuka.get_orientation((tt1[0],tt2_3[0],tt2_3[1]),T3_0)
+    tt2_3 = ik_kuka.get_Theta2_3(wk=0)
 
 
     ## Insert IK code here!
-    theta1 = tt1[1]
-    theta2 = tt2_3[0]
-    theta3 = tt2_3[1]
+    theta1 = min(tt1)
+    print tt2_3
+    if theta1 < -1:
+        theta1 = tt1[0]
+    if fk_kuka.verify_rich_wc(theta1,tt2_3[0],tt2_3[1],wc):
+        theta2 = tt2_3[0]
+        theta3 = tt2_3[1]
+    else:
+        tt2_3 = ik_kuka.get_Theta2_3(wk=1,cfg=0)
+        print "try other cfg"
+        if fk_kuka.verify_rich_wc(theta1,tt2_3[0],tt2_3[1],wc):
+             theta2 = tt2_3[0]
+             theta3 = tt2_3[1]
+        else:
+            print "used last poses"
+            theta2 = joint_trajectory_list[-1].positions[1]
+            theta3 = joint_trajectory_list[-1].positions[2]
+
+    T3_0 = fk_kuka.invT(fk_kuka.T0_3)
+    tt4_6 = ik_kuka.get_orientation((theta1,tt2_3[0],tt2_3[1]),T3_0)
     theta4 = tt4_6[0]
     theta5 = tt4_6[1]
     theta6 = tt4_6[2]
+    print theta1,theta2,theta3,theta4,theta5,theta6
+    print test_case[2]
 
     ##
     ########################################################################################
@@ -185,6 +206,11 @@ def test_code(test_case):
 
 if __name__ == "__main__":
     # Change test case number for different scenarios
-    test_case_number = 6
+    test_case_number = 7
+
 
     test_code(test_cases[test_case_number])
+
+
+
+

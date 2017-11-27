@@ -47,7 +47,7 @@ class IK(FK):
     def get_Theta1(self,wc=None):
         if wc is None: wc=self.wc
 
-        theta = atan2(wc[1],wc[0]).evalf()
+        theta = float(atan2(wc[1],wc[0]).evalf())
         if theta >= 0 :
             return [theta, theta - np.pi]
         else:
@@ -70,10 +70,19 @@ class IK(FK):
         B = hypotenusePita(x, y)
         cosA = cosLaw_cosC(B,C,A)
         cosB = cosLaw_cosC(C,A,B)
+#        print 'cosA ',cosA
+#        print'cosB ',cosB
         # get the ineers angles
-        if cosA < 1 and cosB < 1:
-            a = atan2(mp.sqrt(1-cosA **2), cosA)
-            b = atan2(mp.sqrt(1-cosB **2), cosB)
+        if cosA >= 1:
+#            print 'a out',cosA
+#            print "NO REACHEABLE POINT"
+            cosA = 1 * mp.sign(cosA)
+        if abs(cosB) >= 1:
+#            print 'b out',cosB
+            cosB = 1 * mp.sign(cosB)
+#        else:
+        a = atan2(mp.sqrt(1-cosA **2), cosA)
+        b = atan2(mp.sqrt(1-cosB **2), cosB)
 
         # get the complementary angles
         alpha = atan2(y,x)
@@ -119,6 +128,8 @@ class IK(FK):
         joints.update({q4:theta4,q5:theta5,q6:theta6})
 #        Qf.append(joints)
         return (theta4,theta5,theta6)
+
+
 
 # %%
 def get_Theta1_2_3(s,wc):
@@ -183,6 +194,19 @@ def clean_joint_solutions(wc,T0_5,Q):
     return Q
 
 
+#[0.850979590356099 2.16703764381894 1.38605713827320]
+#q=[0.862681150861269 ,0.461817448667319, -0.170204147609226]
+
+#[0.736235619812743 2.23262538887108 1.40856583001886]
+#[0.533137745611759 2.32834675646592 1.44525693223893]
+#[0.319195070728320 2.40449274786955 1.48056617584669]
+#[0.101365555534477 2.45890086944120 1.51392454329762]
+#[-0.123047933145421 2.49253488408743 1.54632460265737]
+#[-0.246102926117589 2.50176697954842 1.56347399583520]
+#[-0.370140021709296 2.50462290621726 1.58044171557705]
+#[-0.441518268789593 2.50335008680461 1.59009380374323]
+#[-0.513038549472886 2.49994199750433 1.59970494816823]
+
 # %%
 if __name__ == "__main__":
     # Symbolics variables definition
@@ -220,7 +244,8 @@ if __name__ == "__main__":
     pt = test_cases[n][0][0]
     rpy = tf.euler_from_quaternion(test_cases[n][0][1])
     ik_kuka.get_Rrpy(*rpy)
-    ik_kuka.get_wc(pt[0],pt[1],pt[2])
+#    wc = ik_kuka.get_wc(pt[0],pt[1],pt[2])
+    wc = ik_kuka.wc = [-0.513038549472886, 2.49994199750433, 1.59970494816823]
     tt1 = ik_kuka.get_Theta1()
     tt2_3 =ik_kuka.get_Theta2_3(wk=0)
     print 'Wrist center: '
@@ -233,5 +258,6 @@ if __name__ == "__main__":
 
     T3_0 = fk_kuka.invT(fk_kuka.T0_3)
     print ik_kuka.get_orientation((tt1[0],tt2_3[0],tt2_3[1]),T3_0)
-
+#    fk_kuka.verify_rich_wc(min(tt1),tt2_3[0],tt2_3[1],wc)
+    fk_kuka.verify_rich_wc(-0.65,0.45,-0.36,wc)
     # TODO: Multiple solution orientation
