@@ -206,11 +206,7 @@ def test_code(test_case):
 
 if __name__ == "__main__":
     # Change test case number for different scenarios
-    test_case_number = 7
+    test_case_number = 1
 
 
     test_code(test_cases[test_case_number])
-
-
-
-
