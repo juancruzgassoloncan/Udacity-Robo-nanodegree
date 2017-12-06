@@ -4,7 +4,7 @@
 from pcl_helper import *
 import rospy
 import pcl
-import rasnac_c
+
 
 # TODO: Define functions as required
 def voxel_grid_filter(cloud,l_size=0.01):
