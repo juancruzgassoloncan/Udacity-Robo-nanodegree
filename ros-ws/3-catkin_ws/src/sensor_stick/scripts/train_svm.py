@@ -63,7 +63,7 @@ y_train = encoder.fit_transform(y_train)
 
 # Create classifier
 clf = svm.SVC(kernel='linear')
-#clf = svm.SVC(kernel='rbf')
+_#clf = svm.SVC(kernel='rbf')
 
 # Set up 5-fold cross-validation
 kf = cross_validation.KFold(len(X_train),
