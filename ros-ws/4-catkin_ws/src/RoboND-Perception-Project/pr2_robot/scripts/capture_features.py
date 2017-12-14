@@ -15,17 +15,20 @@ from geometry_msgs.msg import Pose
 from sensor_msgs.msg import PointCloud2
 import yaml
 
+
 def get_normals(cloud):
-    get_normals_prox = rospy.ServiceProxy('/feature_extractor/get_normals', GetNormals)
+    get_normals_prox = rospy.ServiceProxy(
+        '/feature_extractor/get_normals', GetNormals)
     return get_normals_prox(cloud).cluster
 
 
 if __name__ == '__main__':
     rospy.init_node('capture_node')
-
+    # list all the source files
     pick_lists = ["../config/pick_list_1.yaml",
-                 "../config/pick_list_2.yaml",
-                 "../config/pick_list_3.yaml"]
+                  "../config/pick_list_2.yaml",
+                  "../config/pick_list_3.yaml"]
+    # go through all files and extract objects names
     models = []
     for pick_list in pick_lists:
         stream = open(pick_list, "r")
@@ -43,7 +46,7 @@ if __name__ == '__main__':
         spawn_model(model_name)
         print 'model: ', model_name
         for i in range(500):
-            print 'sample n:',i
+            print 'sample n:', i
             # make five attempts to get a valid a point cloud then give up
             sample_was_good = False
             try_count = 0
@@ -59,7 +62,10 @@ if __name__ == '__main__':
                     sample_was_good = True
 
             # Extract histogram features
-            chists = compute_color_histograms(sample_cloud, using_hsv=True)
+            chists = compute_color_histograms(sample_cloud,
+                                              using_hsv=True,
+                                              nbins=62,
+                                              range=(0, 256))
             normals = get_normals(sample_cloud)
             nhists = compute_normal_histograms(normals)
             feature = np.concatenate((chists, nhists))
@@ -67,6 +73,4 @@ if __name__ == '__main__':
 
         delete_model()
 
-
-    pickle.dump(labeled_features, open('training_set_2.sav', 'wb'))
-
+    pickle.dump(labeled_features, open('training_set_3.sav', 'wb'))

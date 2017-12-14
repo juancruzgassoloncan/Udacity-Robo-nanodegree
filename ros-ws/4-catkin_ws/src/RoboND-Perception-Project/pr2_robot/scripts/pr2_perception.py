@@ -37,7 +37,7 @@ def get_normals(cloud):
 def make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose):
     yaml_dict = {}
     yaml_dict["test_scene_num"] = test_scene_num.data
-    yaml_dict["arm_name"]  = arm_name.data
+    yaml_dict["arm_name"] = arm_name.data
     yaml_dict["object_name"] = object_name.data
     yaml_dict["pick_pose"] = message_converter.convert_ros_message_to_dictionary(pick_pose)
     yaml_dict["place_pose"] = message_converter.convert_ros_message_to_dictionary(place_pose)
@@ -177,8 +177,8 @@ def pr2_mover(object_list):
     yaml_dic = []
     for i in range(len(object_list_param)):
         # TODO: Parse parameters into individual variables
-        obj_list_name =  object_list_param[i]['name']
-        obj_list_group =  object_list_param[i]['group']
+        obj_list_name = object_list_param[i]['name']
+        obj_list_group = object_list_param[i]['group']
         for obj in object_list:
             if obj.label == obj_list_name:
                 obj_name.data = obj_list_name
@@ -200,7 +200,7 @@ def pr2_mover(object_list):
                 place_pose.position.y = place[1]
                 place_pose.position.z = place[2]
         # TODO: Create a list of dictionaries (made with make_yaml_dict()) for later output to yaml format
-        dic = make_yaml_dict(test_scene_n,arm,obj_name,pick_pose,place_pose)
+        dic = make_yaml_dict(test_scene_n, arm, obj_name, pick_pose, place_pose)
         yaml_dic.append(dic)
         # Wait for 'pick_place_routine' service to come up
     # TODO: Output your request parameters into output yaml file
@@ -216,7 +216,7 @@ def pr2_mover(object_list):
 #        resp = pick_place_routine(TEST_SCENE_NUM, OBJECT_NAME, WHICH_ARM, PICK_POSE, PLACE_POSE)
         resp = pick_place_routine(test_scene_n,obj_name,arm,pick_pose,place_pose)
 
-        print ("Response: ",resp.success)
+        print("Response: ",resp.success)
 
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
@@ -225,6 +225,7 @@ def pr2_mover(object_list):
 
 if __name__ == '__main__':
 
+    # Globals variables
     robust = False
     prev = None
     stable = 0
