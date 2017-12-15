@@ -130,8 +130,12 @@ object_list:
 
 ## Conclusion
 
-It was successful applied all concepts and techniques acquired during the Exercises 1,2 and 3. There was also applied a statistical filter to cleaned up the nosy data with acceptable results.
+All the concepts and techniques acquired during exercises 1, 2 and 3 were applied successfully. A statistical filter was also applied to clean the intrusive data with acceptable results. Finally, all the necessary ROS messages were created to obtain the appropriate information to write the yaml files as requested.
 
-The classification was relative good but it had problems with the book classifying it as stick notes. That could be solverd with a larger training set or working with the feature capturing, i.g. changing the histograms configurations.
+The classification was relatively good, but he had problems with the book classifying it as sticky notes. That could be solved with a larger training set, working with the capture of features, p. change the histogram settings or adjust the SVM parameters.
 
-As a future work, it is planned to face the challenge of pick and place.
+As a curious note, when the voxel size is 0.005, the SVM usually confuses the glue with the cookies but correctly recognizes the book. In addition, the output was not stable, so a small logic was added to wait until 3 equal consecutive exits remain. As an example, with the previous configuration of the voxel grid filter, the SVM manages to correctly classify all the objects as shown in the following image and the `output_3_100.yaml`.
+
+![**8/8 classification with LEAF_SIZE=0.0005**](./img/test_3_100.png)
+
+As future work, it is planned to face the challenge of choosing and placing.
