@@ -1,25 +1,26 @@
-# Project: Perception Pick & Place
 
+# Writeup
+## Project: Perception Pick & Place
 --------------------------------------------------------------------------------
 
-# Required Steps for a Passing Submission:
-
-1. Extract features and train an SVM model on new objects (see `pick_list_*.yaml` in `/pr2_robot/config/` for the list of models you'll be trying to identify).
-2. Write a ROS node and subscribe to `/pr2/world/points` topic. This topic contains noisy point cloud data that you must work with.
-3. Use filtering and RANSAC plane fitting to isolate the objects of interest from the rest of the scene.
-4. Apply Euclidean clustering to create separate clusters for individual items.
-5. Perform object recognition on these objects and assign them labels (markers in RViz).
-6. Calculate the centroid (average in x, y and z) of the set of points belonging to that each object.
-7. Create ROS messages containing the details of each object (name, pick_pose, etc.) and write these messages out to `.yaml` files, one for each of the 3 scenarios (`test1-3.world` in `/pr2_robot/worlds/`). [See the example `output.yaml` for details on what the output should look like.](https://github.com/udacity/RoboND-Perception-Project/blob/master/pr2_robot/config/output.yaml)
-8. Submit a link to your GitHub repo for the project or the Python code for your perception pipeline and your output `.yaml` files (3 `.yaml` files, one for each test world). You must have correctly identified 100% of objects from `pick_list_1.yaml` for `test1.world`, 80% of items from `pick_list_2.yaml` for `test2.world` and 75% of items from `pick_list_3.yaml` in `test3.world`.
-9. Congratulations! Your Done!
-
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.
+#### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.
 
 --------------------------------------------------------------------------------
+### Some comments about the code
 
-### Writeup
+The code for the **RoboND-Perception-Excercise** is at the `row_ws/3-catking_ws/` specifically the for `sensor_stick`
 
+The code for ** RoboND-Perception-Excercise ** is in `row_ws / 3-catking_ws /` specifically for `sensor_stick`.
+
+The code for the current project is mainly in `pr2_perception.py`. The other important file is `my_helper.py` that has all the python functions implemented and used in` pr2_perception.py`.
+
+The `pick_place_project.launch` file receive as argument `num` the test scena number.
+
+  * i.e. `roslaunch pr2_robot pick_place_project.launch num:=1` for test1.world and `pick_list_1.yaml`. 
+  
+The same is for the python script `pr2_perception.py` that recieve the argument -n  o --number.
+
+ * i.e `python pr2_perception.py -n 1` for the test1.world
 
 ### Exercise 1, 2 and 3 pipeline implemented
 
@@ -138,4 +139,4 @@ As a curious note, when the voxel size is 0.005, the SVM usually confuses the gl
 
 ![**8/8 classification with LEAF_SIZE=0.0005**](./img/test_3_100.png)
 
-As future work, it is planned to face the challenge of choosing and placing.
+As future work, it is planned to face the challenge of pick and place.
