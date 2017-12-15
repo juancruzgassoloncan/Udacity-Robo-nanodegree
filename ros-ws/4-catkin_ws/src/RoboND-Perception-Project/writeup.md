@@ -81,7 +81,7 @@ The steps to complete this exercise are the following:
 
 Exercise 3 asked to classify the cluster for object recognition. To do that it was necessary to:
 
-  1. Generate a training set by capturing features.
+  1. Generate a training set by capturing features. `training_set_2.sav`
     * 500 samples per object
     * 32 bins in a range of 0 to 256 to calculate the color histograms.
     * 10 bins in a range of -1 to 1 to calculate the normal histograms.
@@ -89,6 +89,19 @@ Exercise 3 asked to classify the cluster for object recognition. To do that it w
     * After testing different configurations of the SVM it was opted for the linear kernel and C=1.2.
 
 ![**Confusion Matrix**](./img/cmx.png)
+
+>There also were created:
+>
+> `training_set.sav`
+>    * 50 samples per object
+>    * 32 bins in a range of 0 to 256 to calculate the color histograms.
+>    * 10 bins in a range of -1 to 1 to calculate the normal histograms.
+>
+> `training_set_3.sav`
+>    * 500 samples per object
+>    * 64 bins in a range of 0 to 256 to calculate the color histograms.
+>    * 10 bins in a range of -1 to 1 to calculate the normal histograms.
+>But not good enough results.
 
   3. Classify the clouds of segmented objects and publish label markers.
 
