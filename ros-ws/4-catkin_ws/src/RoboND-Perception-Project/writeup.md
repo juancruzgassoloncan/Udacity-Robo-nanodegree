@@ -12,8 +12,6 @@
 
 The code for the **RoboND-Perception-Excercise** is at the `row_ws/3-catking_ws/` specifically the for `sensor_stick`
 
-The code for ** RoboND-Perception-Excercise ** is in `row_ws / 3-catking_ws /` specifically for `sensor_stick`.
-
 The code for the current project is mainly in `pr2_perception.py`. The other important file is `my_helper.py` that has all the python functions implemented and used in` pr2_perception.py`.
 
 The `pick_place_project.launch` file receive as argument `num` the test scena number.
