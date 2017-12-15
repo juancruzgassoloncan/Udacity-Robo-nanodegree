@@ -64,7 +64,7 @@ if __name__ == '__main__':
             # Extract histogram features
             chists = compute_color_histograms(sample_cloud,
                                               using_hsv=True,
-                                              nbins=62,
+                                              nbins=32,
                                               range=(0, 256))
             normals = get_normals(sample_cloud)
             nhists = compute_normal_histograms(normals)

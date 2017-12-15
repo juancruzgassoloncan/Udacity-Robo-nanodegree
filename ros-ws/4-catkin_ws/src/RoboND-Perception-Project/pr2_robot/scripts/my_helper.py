@@ -12,7 +12,7 @@ from pcl_helper import *
 import pcl
 
 
-def statical_filter(cloud, k_neighbors=50, scale_f=1.0):
+def statistical_filter(cloud, k_neighbors=50, scale_f=1.0):
     """
     Apply a statical filter over a point cloud.
 

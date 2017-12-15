@@ -105,7 +105,8 @@ model = {'classifier': clf, 'classes': encoder.classes_, 'scaler': X_scaler}
 pickle.dump(model, open('model.sav', 'wb'))
 
 # Plot non-normalized confusion matrix
-plt.figure()
+# plt.figure()
+fig, ax = plt.subpltos(1, 2, sharedy=True)
 plot_confusion_matrix(confusion_matrix, classes=encoder.classes_,
                       title='Confusion matrix, without normalization')
 
