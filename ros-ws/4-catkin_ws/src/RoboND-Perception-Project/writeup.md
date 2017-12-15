@@ -23,7 +23,7 @@
 
 ### Exercise 1, 2 and 3 pipeline implemented
 
-##### 0. Add statical filter clean up the noisy point cloud data.
+##### 0\. Add statistical filter clean up the noisy point cloud data.
 
 In order to achieve the cleaning of noisy data, a function was created that filters out statistical outliers.
 
@@ -84,6 +84,54 @@ Exercise 3 asked to classify the cluster for object recognition. To do that it w
     * 10 bins in a range of -1 to 1 to calculate the normal histograms.
   2. Train a support vector machine for classification.
     * After testing different configurations of the SVM it was opted for the linear kernel and C=1.2.
-![**Confusion Matrix**](./img/)
 
-  3. Classify the clouds of segmented objects and publish label mar
+![**Confusion Matrix**](./img/cmx.png)
+
+  3. Classify the clouds of segmented objects and publish label markers.
+
+![**3/3 Test_world_1**](./img/clustering&color.png)
+
+![**4/5 Test_world_2**](./img/test2.png)
+
+![**7/8 Test_world_3**](./img/test3.png)
+
+#### 4\. Calculate the centroid (average in x, y and z) of the set of points belonging to that each object. Then create a ROS messages containing the details of each object (name, pick_pose, etc.) and write these messages out to `.yaml` files, one for each of the 3 scenarios (`test1-3.world` in `/pr2_robot/worlds/`).
+
+To calculate the centroid, we worked with the point clouds and the data type. Then for each cluster the mean of each axis was calculated to obtain the coordinates of the centroid.
+
+Finally it was created the ROS messages required to write a `output_1-3.yaml` for each test scene. For each individual object it was written the follow information:
+
+```yaml
+object_list:
+- test_scene_num: 1
+  arm_name: left
+  object_name: car
+  pick_pose:
+    position:
+      x: 0
+      y: 0
+      z: 0
+    orientation:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  place_pose:
+    position:
+      x: 0
+      y: 0
+      z: 0
+    orientation:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+```
+
+## Conclusion
+
+It was successful applied all concepts and techniques acquired during the Exercises 1,2 and 3. There was also applied a statistical filter to cleaned up the nosy data with acceptable results.
+
+The classification was relative good but it had problems with the book classifying it as stick notes. That could be solverd with a larger training set or working with the feature capturing, i.g. changing the histograms configurations.
+
+As a future work, it is planned to face the challenge of pick and place.

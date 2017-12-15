@@ -193,6 +193,7 @@ def pr2_mover(object_list):
         # TODO: Parse parameters into individual variables
         obj_list_name = object_list_param[i]['name']
         obj_list_group = object_list_param[i]['group']
+        # Compare object detected with the list
         for obj in object_list:
             if obj.label == obj_list_name:
                 obj_name.data = obj_list_name
@@ -229,9 +230,11 @@ def pr2_mover(object_list):
             'pick_place_routine', PickPlace)
 
         # TODO: Insert your message variables to be sent as a service request
-#        resp = pick_place_routine(TEST_SCENE_NUM, OBJECT_NAME, WHICH_ARM, PICK_POSE, PLACE_POSE)
-        resp = pick_place_routine(
-            test_scene_n, obj_name, arm, pick_pose, place_pose)
+        resp = pick_place_routine(test_scene_n,
+                                  obj_name,
+                                  arm,
+                                  pick_pose,
+                                  place_pose)
 
         print("Response: ", resp.success)
 
