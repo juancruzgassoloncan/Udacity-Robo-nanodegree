@@ -106,12 +106,13 @@ pickle.dump(model, open('model.sav', 'wb'))
 
 # Plot non-normalized confusion matrix
 # plt.figure()
-fig, ax = plt.subpltos(1, 2, sharedy=True)
+plt.subplot(1,2,1)
 plot_confusion_matrix(confusion_matrix, classes=encoder.classes_,
                       title='Confusion matrix, without normalization')
 
 # Plot normalized confusion matrix
-plt.figure()
+# plt.figure()
+plt.subplot(1,2,2)
 plot_confusion_matrix(confusion_matrix, classes=encoder.classes_, normalize=True,
                       title='Normalized confusion matrix')
 
