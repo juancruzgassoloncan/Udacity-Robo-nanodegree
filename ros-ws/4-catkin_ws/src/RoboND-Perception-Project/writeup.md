@@ -1,6 +1,8 @@
 
 # Writeup
+
 ## Project: Perception Pick & Place
+
 --------------------------------------------------------------------------------
 
 #### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.
@@ -16,8 +18,8 @@ The code for the current project is mainly in `pr2_perception.py`. The other imp
 
 The `pick_place_project.launch` file receive as argument `num` the test scena number.
 
-  * i.e. `roslaunch pr2_robot pick_place_project.launch num:=1` for test1.world and `pick_list_1.yaml`. 
-  
+  * i.e. `roslaunch pr2_robot pick_place_project.launch num:=1` for test1.world and `pick_list_1.yaml`.
+
 The same is for the python script `pr2_perception.py` that recieve the argument -n  o --number.
 
  * i.e `python pr2_perception.py -n 1` for the test1.world
