@@ -1,0 +1,8 @@
+prefix=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/2-catkin_ws/install
+
+Name: kuka_arm
+Description: Description of kuka_arm
+Version: 0.0.0
+Cflags: -I/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/2-catkin_ws/install/include
+Libs: -L/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/2-catkin_ws/install/lib 
+Requires: 

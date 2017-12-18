@@ -1,0 +1,8 @@
+prefix=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/devel
+
+Name: pr2_robot
+Description: Description of pr2_robot
+Version: 0.0.0
+Cflags: -I/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/devel/include
+Libs: -L/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/devel/lib 
+Requires: 

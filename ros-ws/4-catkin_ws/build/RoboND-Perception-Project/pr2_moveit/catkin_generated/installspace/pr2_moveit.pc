@@ -1,0 +1,8 @@
+prefix=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/install
+
+Name: pr2_moveit
+Description: Description of pr2_moveit
+Version: 0.3.0
+Cflags: 
+Libs: -L/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/install/lib 
+Requires: 

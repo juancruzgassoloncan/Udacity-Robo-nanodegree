@@ -1,0 +1,2 @@
+RoboND-Perception-Project/gazebo_grasp_plugin:RoboND-Perception-Project/pr2_moveit:RoboND-Perception-Project/pr2_robot
+-DCATKIN_DEVEL_PREFIX=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/install -G Unix Makefiles

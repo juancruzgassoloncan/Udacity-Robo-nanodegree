@@ -1,0 +1,8 @@
+prefix=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/1-catkin_ws/install
+
+Name: simple_arm
+Description: Description of simple_arm
+Version: 0.0.0
+Cflags: -I/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/1-catkin_ws/install/include
+Libs: -L/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/1-catkin_ws/install/lib 
+Requires: 
