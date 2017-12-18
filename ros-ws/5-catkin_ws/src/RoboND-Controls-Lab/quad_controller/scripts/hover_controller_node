@@ -20,10 +20,10 @@ class HoverControllerNode():
         self.prev_time = rospy.Time.now()
 
         # PID Params
-        ki_max = float(rospy.get_param('~ki_max', '20'))
-        kp = float(rospy.get_param('kp', '0'))
-        ki = float(rospy.get_param('ki', '0'))
-        kd = float(rospy.get_param('kd', '0'))
+        ki_max = float(rospy.get_param('~ki_max', '10'))
+        kp = float(rospy.get_param('kp', '5.2'))
+        ki = float(rospy.get_param('ki', '2.2'))
+        kd = float(rospy.get_param('kd', '3.15'))
 
         self.controller_ = PIDController(kp, ki, kd, ki_max)
 
@@ -56,5 +56,5 @@ if __name__ == '__main__':
     try:
         hc = HoverControllerNode()
         rospy.spin()
-    except rospy.ROSInterruptException: 
+    except rospy.ROSInterruptException:
         pass
