@@ -1,0 +1,6 @@
+/__pycache__/
+*.meta
+*.index
+*.data*
+/checkpoint
+*.p
