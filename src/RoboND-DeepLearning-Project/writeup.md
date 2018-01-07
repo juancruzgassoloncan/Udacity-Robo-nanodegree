@@ -9,9 +9,6 @@
 Table of contents:
 
 <!-- TOC depthFrom:2 depthTo:4 withLinks:1 updateOnSave:0 orderedList:0 -->
-
-- [Follow me](#follow-me)
-		- [_Robotic Nanodegree Udacity_](#robotic-nanodegree-udacity)
 - [Introduction](#introduction)
 - [FCN model](#fcn-model)
 	- [Architecture](#architecture)
