@@ -1,8 +1,0 @@
-prefix=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/5-catkin_ws/install
-
-Name: quad_controller
-Description: Description of quad_controller
-Version: 0.0.0
-Cflags: -I/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/5-catkin_ws/install/include
-Libs: -L/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/5-catkin_ws/install/lib 
-Requires: message_runtime

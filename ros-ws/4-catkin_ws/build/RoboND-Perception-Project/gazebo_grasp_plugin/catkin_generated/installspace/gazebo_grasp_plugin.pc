@@ -1,8 +1,0 @@
-prefix=/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/install
-
-Name: gazebo_grasp_plugin
-Description: Description of gazebo_grasp_plugin
-Version: 1.0.1
-Cflags: -I/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/install/include
-Libs: -L/media/juan/Datos/Repositorios/Udacity-Robo-nanodegree/ros-ws/4-catkin_ws/install/lib -lgazebo_grasp_fix
-Requires: gazebo_ros geometry_msgs roscpp std_msgs
