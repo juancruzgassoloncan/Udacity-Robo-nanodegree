@@ -13,7 +13,8 @@ Workspace created for work and develop Udacity Robotic Nanodegree course.
   - **3D Perception Project**
 
 ## `src`: code in general
+
   * machin_learning: 
     - Code and labs during machine learning class (i.e TensorFlow)
   * RoboND-DeepLearning-Project:
-    - *Deep Learning Project: Follow-me*
+    - **Deep Learning Project: Follow-me**
