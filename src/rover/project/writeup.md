@@ -79,10 +79,10 @@ frame = cv2.imread(img_list[idx])
 
 
 while(1):
-    # Convertirlo a espacio de color HSV
+    # Change to HSV color space.
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # Los valores maximo y minimo de H,S y V se guardan en funcion de la posicion de los sliders
+    # The max and min values of H,S and V are stored depending on the sliders positions
     hMin = cv2.getTrackbarPos('Hue Min', 'image')
     hMax = cv2.getTrackbarPos('Hue Max', 'image')
     sMin = cv2.getTrackbarPos('Sat Min', 'image')
@@ -90,20 +90,19 @@ while(1):
     vMin = cv2.getTrackbarPos('Val Min', 'image')
     vMax = cv2.getTrackbarPos('Val Max', 'image')
 
-    # Se crea un array con las posiciones minimas y maximas
+    # Array with min/max positions
     lower = np.array([hMin, sMin, vMin])
     upper = np.array([hMax, sMax, vMax])
 
-    # Deteccion de colores
+    # Color detection
     mask = cv2.inRange(hsv, lower, upper)
-#     roi = np.zeros_like(mask)
     roi = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
     roi[70:, :] = 1
 
     mask_roi = mask * roi
     threshed = cv2.bitwise_and(frame, frame, dst=None, mask=mask_roi)
 
-    # Mostrar los resultados y salir
+    # Show results
     cv2.imshow('camara', frame)
     cv2.imshow('thresed', threshed)
     cv2.imshow('mask', mask)
@@ -240,18 +239,18 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 
 ##### Notes:
 
-* La velocidad máxima del rover se fijó en 1 porque los movimientos tienden a ser muy gruesos. Al principio pensé en usar un acelerador variable pero si usaba un valor menor a 0.1 el comportamiento del rover era extraño.
+* The maximum rover speed was set to 1 because the movements tend to be very thick. At first I thought about using a variable throttle, but if I used a value less than 0.1, the behavior of the rover was strange.
 
-* Tuve muchos problemas con los obstáculos esféricos, porque hay mucho terreno navegable debajo de ellos pero el rover se atascó con sus partes superiores. Es necesario trabajar mucho más en la detección de obstáculos.
+* I had a lot of problems with the spherical obstacles, because there is a lot of navigable terrain underneath them but the rover got stuck with its tops. Much more work is needed on obstacle detection.
 
-* La política de desenganche es muy simple y muchas veces no es suficiente para desenganchar el robot.
+* The disengagement policy is very simple and often not enough to disengage the robot.
 
-* El estado de ReturnHome no está terminado por falta de tiempo pero la idea principal está codificada.
+* The ReturnHome status is not finished due to lack of time but the main idea is coded.
 
-* Hay tantas mejoras que se pueden implementar como evitar visitar el mismo lugar más de una vez  o un criterio más inteligente para reconocer obstáculos y qué hacer. Creo que la maquina de estados principal podria ser más eficiente.
+* There are as many improvements that can be implemented as avoiding visiting the same place more than once or a smarter criterion for recognizing obstacles and what to do. I think the main state machine might be more efficient.
 
-* La idea de la máquina del estado y algunas otras cosas fueron inspiradas después de ver el video de la caminata. De todos modos el requisito mínimo se podría conseguir trabajando simplemente con la función de paso de percepción.
+* The idea of the state machine and some other things were inspired after watching the video of the walk. However, the minimum requirement could be achieved by simply working with the perception step function.
 
-* Necesito comentar que aquí he implementado mi primera máquina de estado e incluso que no funciona como me gustaría, he pasado muchas horas en este proyecto. Creo que fui un poco ambicioso para hacerlo perfecto y perdí mucho tiempo en detalles no muy importante como el filtro de color para la segmentación. De todos modos he aprendido mucho y todo me ayuda como experiencia.
+* I need to comment that here I have implemented my first state machine and even that it doesn't work as I would like, I have spent many hours on this project. I think I was a little ambitious to make it perfect and I wasted a lot of time on not very important details like the color filter for segmentation. Anyway I have learned a lot and everything helps me as an experience.
 
 ![Final results](./img/End.png)
