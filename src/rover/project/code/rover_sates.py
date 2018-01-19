@@ -31,8 +31,8 @@ class Stop(object):
     def next(self):
         self.rover.throttle = 0.0
         self.rover.steer = 0
-        if abs(self.rover.vel) < 0.1:
-            if self.delay(3):
+        if abs(self.rover.vel) < 0.02:
+            if self.delay(0.5):
                 self.rover.brake = 0.0
                 if self.rover.go_home:
                     return ReturnHome(self.rover)
@@ -123,13 +123,13 @@ class Go(object):
         print('fron area:', self.front_area)
         if self.check_rock_sight():
             self.rover.rock_detected = True
-            return Stop(self.rover, brake=10)
+            return Stop(self.rover, brake=2)
         if self.check_area_stop():  # and is_obstacle_ahead(self.rover) ==
             self.check_vel_max()
             self.update_sterring()
             self.front_area = is_obstacle_ahead(
                 self.rover, range=20, bearing=self.bearing)
-            if self.front_area > 50:
+            if self.front_area > 100:
                 print('fron area:', self.front_area)
                 return Stop(self.rover)
             if self.stuck():
@@ -175,7 +175,7 @@ class SearchClearPath(object):
             return Rock(self.rover)
         else:
             if len(self.rover.nav_angles) >= self.rover.go_forward:
-                if is_obstacle_ahead(self.rover, 25, 0, arc=15) > 10:
+                if is_obstacle_ahead(self.rover, 25, 0, arc=15) > 40:
                     return self
                 else:
                     if AI < 0.40:
@@ -228,7 +228,7 @@ class Stuck(object):
             return Stop(self.rover)
         self.times += 1
         if self.times >= 1:
-            if self.times >= 40:
+            if self.times >= 35:
                 self.rover.throttle = 0.0
                 self.times = 0
                 return Stop(self.rover)
@@ -313,8 +313,8 @@ class Rock(Go):
             self.iteration += 1
             self.rover.steer = np.clip(self.bearing, -15, 15)
             self.go()
-            if self.iteration >= 15:
-                self.rover.max_vel = 1.5
+            if self.iteration >= 5:
+                self.rover.max_vel = 1
                 return Go(self.rover, throttle=0.1)
             else:
                 return self
@@ -381,7 +381,7 @@ class ReturnHome(Go):
             if self.check_area_stop():  # and is_obstacle_ahead(self.rover) ==
                 self.update_sterring()
                 self.check_vel_max()
-                if self.front_area > 100:
+                if self.front_area > 150:
                     return Stop(self.rover)
                 if self.stuck():
                     return Stuck(self.rover)
