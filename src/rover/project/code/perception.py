@@ -23,12 +23,12 @@ def color_thresh(img, rgb_thresh=(160, 160, 160)):
 
 def color_thresh_hsv(img, low_thresh=(20, 85, 85), high_thresh=(35, 255, 255), inv=False, roi=None):
     img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-    mask = cv2.inRange(img_hsv, low_thresh, high_thresh, dst=None) / 255
+    mask = cv2.inRange(img_hsv, low_thresh, high_thresh, dst=None)
     if roi is not None:
         mask = roi * mask
     if inv is True:
         mask = -(mask - 1)
-    mask = cv2.blur(mask, (7, 7))
+    # mask = cv2.blur(mask, (7, 7))
     res = cv2.bitwise_and(img, img, dst=None, mask=mask)
     return res, mask
 
@@ -169,9 +169,9 @@ def perception_step(Rover):
     # Example: Rover.vision_image[:,:,0] = obstacle color-thresholded binary image
     #          Rover.vision_image[:,:,1] = rock_sample color-thresholded binary image
     #          Rover.vision_image[:,:,2] = navigable terrain color-thresholded binary image
-    Rover.vision_image[:, :, 0] = mask_o * 255
-    Rover.vision_image[:, :, 1] = mask_r * 255
-    Rover.vision_image[:, :, 2] = mask_t * 255
+    Rover.vision_image[:, :, 0] = mask_o
+    Rover.vision_image[:, :, 1] = mask_r
+    Rover.vision_image[:, :, 2] = mask_t
     Rover.vision_image = perspect_transform(Rover.vision_image, src, dst)
     # 5) Convert map image pixel values to rover-centric coords
     t_xpix, t_ypix = rover_coords(w_mask_t)

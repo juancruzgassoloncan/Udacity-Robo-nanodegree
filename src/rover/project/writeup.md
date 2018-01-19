@@ -79,10 +79,10 @@ frame = cv2.imread(img_list[idx])
 
 
 while(1):
-    # Convertirlo a espacio de color HSV
+    # Change to HSV color space.
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # Los valores maximo y minimo de H,S y V se guardan en funcion de la posicion de los sliders
+    # The max and min values of H,S and V are stored depending on the sliders positions
     hMin = cv2.getTrackbarPos('Hue Min', 'image')
     hMax = cv2.getTrackbarPos('Hue Max', 'image')
     sMin = cv2.getTrackbarPos('Sat Min', 'image')
@@ -90,20 +90,19 @@ while(1):
     vMin = cv2.getTrackbarPos('Val Min', 'image')
     vMax = cv2.getTrackbarPos('Val Max', 'image')
 
-    # Se crea un array con las posiciones minimas y maximas
+    # Array with min/max positions
     lower = np.array([hMin, sMin, vMin])
     upper = np.array([hMax, sMax, vMax])
 
-    # Deteccion de colores
+    # Color detection
     mask = cv2.inRange(hsv, lower, upper)
-#     roi = np.zeros_like(mask)
     roi = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
     roi[70:, :] = 1
 
     mask_roi = mask * roi
     threshed = cv2.bitwise_and(frame, frame, dst=None, mask=mask_roi)
 
-    # Mostrar los resultados y salir
+    # Show results
     cv2.imshow('camara', frame)
     cv2.imshow('thresed', threshed)
     cv2.imshow('mask', mask)

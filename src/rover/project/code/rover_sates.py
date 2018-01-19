@@ -18,12 +18,10 @@ class Stop(object):
             self.start_time = self.rover.total_time
         delta = self.rover.total_time - self.start_time
         if delta <= sec:
-            # print 'stabilizing...', delta
             return False
         else:
             self.start_time = 0
             return True
-
 
     def run(self):
         self.rover.brake = self.brake
@@ -121,17 +119,18 @@ class Go(object):
             return False
 
     def next(self):
-        print 'area: ', len(self.rover.nav_angles)
-        print 'fron area:', self.front_area
+        print('area: ', len(self.rover.nav_angles))
+        print('fron area:', self.front_area)
         if self.check_rock_sight():
             self.rover.rock_detected = True
             return Stop(self.rover, brake=10)
         if self.check_area_stop():  # and is_obstacle_ahead(self.rover) ==
             self.check_vel_max()
             self.update_sterring()
-            self.front_area = is_obstacle_ahead(self.rover, range=20, bearing=self.bearing)
+            self.front_area = is_obstacle_ahead(
+                self.rover, range=20, bearing=self.bearing)
             if self.front_area > 50:
-                print 'fron area:', self.front_area
+                print('fron area:', self.front_area)
                 return Stop(self.rover)
             if self.stuck():
                 return Stuck(self.rover)
@@ -167,11 +166,11 @@ class SearchClearPath(object):
             self.turn_direction = 'right'
 
     def next(self):
-        print 'iter: ', self.iteration
+        print('iter: ', self.iteration)
         self.update_turn()
         AI, AD = side_areas(self.rover)
-        print 'area: ', len(self.rover.nav_angles)
-        print 'AI:', AI
+        print('area: ', len(self.rover.nav_angles))
+        print('AI:', AI)
         if self.rover.rock_detected:
             return Rock(self.rover)
         else:
@@ -200,7 +199,7 @@ class SearchClearPath(object):
                 self.iteration = 0
                 return Go(self.rover)
                 # else:
-                    # return self
+                # return self
             else:
                 # self.iteration +=1
                 return self
@@ -228,7 +227,7 @@ class Stuck(object):
         if self.rover.picking_up:
             return Stop(self.rover)
         self.times += 1
-        if self.times >=1:
+        if self.times >= 1:
             if self.times >= 40:
                 self.rover.throttle = 0.0
                 self.times = 0
@@ -240,6 +239,7 @@ class Stuck(object):
                     self.rover.throttle = 0
                 return self
         return self
+
 
 class Rock(Go):
     def __init__(self, rover):
@@ -266,7 +266,7 @@ class Rock(Go):
             if self.rover.vel == 0 and not self.rover.picking_up:
                 self.rover.send_pickup = True
                 while self.rover.picking_up:
-                    print 'picking up'
+                    print('picking up')
                 self.rover.rock_detected = False
                 self.rover.max_vel = 1
                 return True
@@ -289,7 +289,6 @@ class Rock(Go):
 
         delta = self.rover.total_time - self.start_time
         while delta - self.start_time < sec:
-            # print 'stabilizing...', delta
             return False
         else:
             self.start_time = 0
@@ -312,7 +311,7 @@ class Rock(Go):
         self.update_rock_data()
         if self.distance == 0:
             self.iteration += 1
-            self.rover.steer = np.clip(self.bearing,-15,15)
+            self.rover.steer = np.clip(self.bearing, -15, 15)
             self.go()
             if self.iteration >= 15:
                 self.rover.max_vel = 1.5
@@ -321,8 +320,8 @@ class Rock(Go):
                 return self
         else:
             self.iteration = 0
-            print 'distance:', self.distance
-            print 'angle: ', self.angle
+            print('distance:', self.distance)
+            print('angle: ', self.angle)
             self.go()
             self.putting_rock_infront()
             if self.check():
@@ -368,7 +367,8 @@ class ReturnHome(Go):
 
         self.rover.steer = np.clip(self.bearing_to_home_position(),
                                    min_angle, max_angle)
-        self.front_area = is_obstacle_ahead(self.rover, range=30, bearing=self.bearing_to_home_position())
+        self.front_area = is_obstacle_ahead(
+            self.rover, range=30, bearing=self.bearing_to_home_position())
 
     def run(self):
         pass
@@ -376,8 +376,8 @@ class ReturnHome(Go):
     def next(self):
         if self.rover.samples_to_find == 0:
             self.rover.go_home = True
-            print 'area: ', len(self.rover.nav_angles)
-            print 'front area:', self.front_area
+            print('area: ', len(self.rover.nav_angles))
+            print('front area:', self.front_area)
             if self.check_area_stop():  # and is_obstacle_ahead(self.rover) ==
                 self.update_sterring()
                 self.check_vel_max()
