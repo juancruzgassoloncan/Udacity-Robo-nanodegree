@@ -39,8 +39,8 @@ def segmentation(img, mask):
 
 
 def world_segmentation(img,
-                       l_r_thresh=(20, 65, 65),
-                       h_r_thresh=(30, 255, 255),
+                       l_r_thresh=(25, 65, 65),
+                       h_r_thresh=(35, 255, 255),
                        l_n_thresh=(0, 0, 160),
                        h_n_thresh=(255, 120, 255),
                        roi=None,
@@ -223,8 +223,12 @@ def perception_step(Rover):
     rx_o, ry_o = range_view(o_xpix, o_ypix, max_r=50, min_r=0)
     Rover.obs_dists, Rover.obs_angles = to_polar_coords(rx_o, ry_o)
 
+
+    rx_r, ry_r = range_view(r_xpix, r_ypix, max_r=30, min_r=0)
+
     if w_mask_r.any():
-        Rover.rock_dists, Rover.rock_angles = to_polar_coords(r_xpix, r_ypix)
+        Rover.rock_dists, Rover.rock_angles = to_polar_coords(rx_r, ry_r)
+        # Rover.rock_dists, Rover.rock_angles = to_polar_coords(r_xpix, r_ypix)
     else:
         Rover.rock_dists = []
         Rover.rock_angles = []
