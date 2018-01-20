@@ -76,13 +76,13 @@ class Go(object):
         mean_dir = rad2deg(np.mean(get_near_periferics(self.nav_data, 100)))
         desv = rad2deg(np.sqrt(get_near_periferics(self.nav_data, 100).var()))
         AI, AD = side_areas(self.rover)
-        if AI > 0.45:
+        if AI > 0.48:
             self.bearing = np.int_(mean_dir)
             self.rover.steer = np.clip(self.bearing, -15, 15)
-        elif AI > 0.30:
+        elif AI > 0.25:
             self.bearing = np.int_(mean_dir + 0.8 * desv)
             self.rover.steer = np.clip(self.bearing, -2, 15)
-        elif AI < 0.15:
+        elif AI < 0.20:
             self.bearing = np.int_(mean_dir + 0.5 * desv)
             self.rover.steer = np.clip(self.bearing, -12, 12)
         else:
@@ -102,8 +102,8 @@ class Go(object):
             self.rover.throttle = self.rover.throttle_set
 
     def stuck(self):
-        if self.rover.vel < 0.05:
-            if self.delay(0.2):
+        if self.rover.vel < 0.02:
+            if self.delay(0.3):
                 if self.rover.throttle > 0:
                     return True
                 else:
@@ -166,9 +166,9 @@ class SearchClearPath(object):
             self.turn_direction = 'right'
 
     def next(self):
-        print('iter: ', self.iteration)
         self.update_turn()
         AI, AD = side_areas(self.rover)
+        print('iter: ', self.iteration)
         print('area: ', len(self.rover.nav_angles))
         print('AI:', AI)
         if self.rover.rock_detected:
@@ -178,7 +178,7 @@ class SearchClearPath(object):
                 if is_obstacle_ahead(self.rover, 25, 0, arc=15) > 40:
                     return self
                 else:
-                    if AI < 0.40:
+                    if AI < 0.48:
                         return self
                     else:
                         self.iteration = 0
@@ -246,7 +246,7 @@ class Rock(Go):
         self.rover = rover
         self.distance = 0
         self.angle = 0
-        self.iteration = 30
+        self.iteration = 0
         self.bearing = 0
         self.start_time = 0
 
@@ -283,17 +283,6 @@ class Rock(Go):
         else:
             self.rover.steer = 0
 
-    def delay(self, sec):
-        if self.start_time == 0:
-            self.start_time = self.rover.total_time
-
-        delta = self.rover.total_time - self.start_time
-        while delta - self.start_time < sec:
-            return False
-        else:
-            self.start_time = 0
-            return True
-
     def go(self):
         if self.rover.vel > self.rover.max_vel:
             self.rover.throttle = 0
@@ -315,6 +304,8 @@ class Rock(Go):
             self.go()
             if self.iteration >= 5:
                 self.rover.max_vel = 1
+                self.rover.rock_detected = False
+                self.iteration = 0
                 return Go(self.rover, throttle=0.1)
             else:
                 return self

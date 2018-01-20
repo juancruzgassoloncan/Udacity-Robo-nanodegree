@@ -224,7 +224,7 @@ def perception_step(Rover):
     Rover.obs_dists, Rover.obs_angles = to_polar_coords(rx_o, ry_o)
 
 
-    rx_r, ry_r = range_view(r_xpix, r_ypix, max_r=30, min_r=0)
+    rx_r, ry_r = range_view(r_xpix, r_ypix, max_r=35, min_r=0)
 
     if w_mask_r.any():
         Rover.rock_dists, Rover.rock_angles = to_polar_coords(rx_r, ry_r)
