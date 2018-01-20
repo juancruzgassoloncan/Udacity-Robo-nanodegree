@@ -196,7 +196,7 @@ def range_view(xpix, ypix, max_r=50, min_r=0):
 
 ##### Decision
 
-For the `decision_step()` it was implemented a state machine with five state: `Go`, `Stuck`, `Stop`, `SearchClearPath`, `Rock` and `ReturnHome`.
+For the `decision_step()` a state machine with five states was implemented: `Go`, `Stuck`, `Stop`, `SearchClearPath`, `Rock` and `ReturnHome`.
 
 ![State Machine diagram](./img/state_machine.png)
 
