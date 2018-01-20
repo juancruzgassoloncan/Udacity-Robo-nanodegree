@@ -254,3 +254,8 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 * I need to comment that here I have implemented my first state machine and even that it doesn't work as I would like, I have spent many hours on this project. I think I was a little ambitious to make it perfect and I wasted a lot of time on not very important details like the color filter for segmentation. Anyway I have learned a lot and everything helps me as an experience.
 
 ![Final results](./img/End.png)
+
+## Newest Videos post resumited:
+
+* [N2](https://youtu.be/F3k8zieyfzU)
+* [N3](https://youtu.be/bxw6wm5c2UI)
